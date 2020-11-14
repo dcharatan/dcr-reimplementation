@@ -13,8 +13,8 @@ camera_target = np.zeros(3)
 # Make a rotation matrix.
 z_up = np.array((0, 0, -1))
 camera_to_target = camera_target - camera_location
-camera_to_target /= np.linalg.norm(camera_to_target)
 y = camera_to_target
+y /= np.linalg.norm(y)
 x = np.cross(y, z_up)
 x /= np.linalg.norm(x)
 z = np.cross(x, y)

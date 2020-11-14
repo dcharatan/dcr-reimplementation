@@ -5,7 +5,9 @@ import numpy as np
 
 
 class Camera(ABC):
-    """Abstract class for a camera. A camera should produce """
+    """Abstract class for a camera. Given R and T, a camera should produce an
+    image of the shape it was initialized with.
+    """
 
     def __init__(self, image_shape: Tuple[int]) -> None:
         self.image_shape = image_shape
