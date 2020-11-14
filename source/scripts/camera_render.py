@@ -16,7 +16,9 @@ camera_to_target = camera_target - camera_location
 camera_to_target /= np.linalg.norm(camera_to_target)
 y = camera_to_target
 x = np.cross(y, z_up)
+x /= np.linalg.norm(x)
 z = np.cross(x, y)
+z /= np.linalg.norm(z)
 R = np.stack([x, y, z], axis=1)
 
 # Render an image.

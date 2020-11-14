@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Tuple
+from ..utilities import is_rotation_matrix, is_translation_vector
 import numpy as np
 
 
@@ -11,8 +12,7 @@ class Camera(ABC):
 
     def render_with_pose(self, R: np.ndarray, t: np.ndarray) -> np.ndarray:
         """Wrapper for the camera-specific render function."""
-        assert isinstance(R, np.ndarray) and R.shape == (3, 3)
-        assert isinstance(t, np.ndarray) and t.shape == (3,)
+        assert is_rotation_matrix(R) and is_translation_vector(t)
         image = self._render_with_pose(R, t)
         assert isinstance(image, np.ndarray) and image.shape == self.image_shape
         return image
