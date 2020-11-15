@@ -12,18 +12,18 @@ class CameraPoseEstimator(ABC):
     """
 
     def estimate_pose(
-        self, image1: np.ndarray, image2: np.ndarray
+        self, image1: np.ndarray, image2: np.ndarray, K: np.ndarray, 
     ) -> Tuple[np.ndarray]:
         """Wrapper for the estimator-specific function."""
         assert isinstance(image1, np.ndarray)
         assert isinstance(image2, np.ndarray)
-        R, t = self._estimate_pose(image1, image2)
+        R, t = self._estimate_pose(image1, image2, K)
         assert is_rotation_matrix(R)
         assert is_translation_vector(t)
         return R, t
 
     @abstractmethod
     def _estimate_pose(
-        self, image1: np.ndarray, image2: np.ndarray
+        self, image1: np.ndarray, image2: np.ndarray, K: np.ndarray,
     ) -> Tuple[np.ndarray]:
         raise Exception("Not implemented.")

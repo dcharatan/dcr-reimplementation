@@ -10,5 +10,11 @@
             "request": "launch",
             "module": "source.scripts.camera_render",
         }
+        {
+            "name": "Test Five Point Solver",
+            "type": "python",
+            "request": "launch",
+            "module": "source.scripts.5point_test",
+        }
     ]
 }
