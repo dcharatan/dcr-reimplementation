@@ -39,9 +39,10 @@ class CameraPanda3D(ShowBase, Camera):
         image.shape = (tex.getYSize(), tex.getXSize(), tex.getNumComponents())
 
         # Copy the image to a numpy array.
+        # Relative to the Panda3D viewer, the image is upside down, so it needs to be flipped.
         image_np = np.empty(self.image_shape, dtype=np.uint8)
         np.copyto(image_np, image[:, :, 0:3])
-        return image_np
+        return np.flip(image_np, 0)
 
     def _get_K(self) -> np.ndarray:
         image_height, image_width, _ = self.image_shape
