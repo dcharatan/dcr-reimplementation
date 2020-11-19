@@ -37,4 +37,4 @@ class FivePointEstimator(CameraPoseEstimator):
         E, _ = cv.findEssentialMat(pts1, pts2, K)
         _, R_est, t_est, _ = cv.recoverPose(E, pts1, pts2)
 
-        return R_est, t_est
+        return R_est, t_est.squeeze()
