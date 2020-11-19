@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Tuple
-from ..utilities import is_rotation_matrix, is_translation_vector
+from ..utilities import is_rotation_matrix, is_translation_vector, is_image
 import numpy as np
 
 
@@ -17,7 +17,7 @@ class Camera(ABC):
         assert is_rotation_matrix(R)
         assert is_translation_vector(t)
         image = self._render_with_pose(R, t)
-        assert isinstance(image, np.ndarray) and image.shape == self.image_shape
+        assert is_image(image) and image.shape == self.image_shape
         return image
 
     @abstractmethod

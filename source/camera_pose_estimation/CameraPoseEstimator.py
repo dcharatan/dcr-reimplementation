@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Tuple
-from ..utilities import is_rotation_matrix, is_translation_vector
+from ..utilities import is_rotation_matrix, is_translation_vector, is_image
 import numpy as np
 
 
@@ -12,11 +12,14 @@ class CameraPoseEstimator(ABC):
     """
 
     def estimate_pose(
-        self, image1: np.ndarray, image2: np.ndarray, K: np.ndarray, 
+        self,
+        image1: np.ndarray,
+        image2: np.ndarray,
+        K: np.ndarray,
     ) -> Tuple[np.ndarray]:
         """Wrapper for the estimator-specific function."""
-        assert isinstance(image1, np.ndarray)
-        assert isinstance(image2, np.ndarray)
+        assert is_image(image1)
+        assert is_image(image2)
         R, t = self._estimate_pose(image1, image2, K)
         assert is_rotation_matrix(R)
         assert is_translation_vector(t)
@@ -24,6 +27,9 @@ class CameraPoseEstimator(ABC):
 
     @abstractmethod
     def _estimate_pose(
-        self, image1: np.ndarray, image2: np.ndarray, K: np.ndarray,
+        self,
+        image1: np.ndarray,
+        image2: np.ndarray,
+        K: np.ndarray,
     ) -> Tuple[np.ndarray]:
         raise Exception("Not implemented.")

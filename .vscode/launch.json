@@ -9,7 +9,13 @@
             "type": "python",
             "request": "launch",
             "module": "source.scripts.camera_render",
-        }
+        },
+        {
+            "name": "Test Pose Estimation With Synthetic Images",
+            "type": "python",
+            "request": "launch",
+            "module": "source.scripts.camera_recreate_pose",
+        },
         {
             "name": "Test Five Point Solver",
             "type": "python",
