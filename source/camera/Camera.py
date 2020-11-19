@@ -14,11 +14,22 @@ class Camera(ABC):
 
     def render_with_pose(self, R: np.ndarray, t: np.ndarray) -> np.ndarray:
         """Wrapper for the camera-specific render function."""
-        assert is_rotation_matrix(R) and is_translation_vector(t)
+        assert is_rotation_matrix(R)
+        assert is_translation_vector(t)
         image = self._render_with_pose(R, t)
         assert isinstance(image, np.ndarray) and image.shape == self.image_shape
         return image
 
     @abstractmethod
     def _render_with_pose(self, R: np.ndarray, t: np.ndarray) -> np.ndarray:
+        raise Exception("Not implemented.")
+
+    def get_K(self) -> np.ndarray:
+        """Get the intrinsic camera calibration matrix K."""
+        K = self._get_K()
+        assert isinstance(K, np.ndarray) and K.shape == (3, 3)
+        return K
+
+    @abstractmethod
+    def _get_K(self) -> np.ndarray:
         raise Exception("Not implemented.")

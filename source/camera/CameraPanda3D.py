@@ -42,3 +42,14 @@ class CameraPanda3D(ShowBase, Camera):
         image_np = np.empty(self.image_shape, dtype=np.uint8)
         np.copyto(image_np, image[:, :, 0:3])
         return image_np
+
+    def _get_K(self) -> np.ndarray:
+        image_height, image_width, _ = self.image_shape
+        return np.array(
+            [
+                [image_width * 0.5, 0, image_width * 0.5],
+                [0, image_height * 0.5, image_height * 0.5],
+                [0, 0, 1],
+            ],
+            dtype=np.float32,
+        )

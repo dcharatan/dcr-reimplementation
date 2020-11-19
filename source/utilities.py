@@ -11,4 +11,4 @@ def is_rotation_matrix(R: np.ndarray) -> bool:
 
 
 def is_translation_vector(t: np.ndarray) -> bool:
-    return isinstance(t, np.ndarray) and t.shape == (3,1)
+    return isinstance(t, np.ndarray) and t.shape == (3,)
