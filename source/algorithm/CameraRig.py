@@ -39,8 +39,7 @@ class CameraRig:
         assert is_translation_vector(t)
         self.hand_t += t
 
-    def get_eye_R(self) -> np.ndarray:
-        return self.hand_eye_R @ self.hand_R
-
-    def get_eye_t(self) -> np.ndarray:
-        return self.hand_eye_t + self.hand_t
+    def capture_image(self) -> np.ndarray:
+        eye_R = self.hand_eye_R @ self.hand_R
+        eye_t = self.hand_eye_t + self.hand_t
+        return self.camera.render_with_pose(eye_R, eye_t)
