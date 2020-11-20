@@ -21,19 +21,17 @@ class DynamicRelocalizer(ABC):
         self.camera_rig = camera_rig
         self.camera_pose_estimator = camera_pose_estimator
 
-    def recreate_pose(
+    def recreate_image(
         self, reference_image: np.ndarray, initial_R: np.ndarray, initial_t: np.ndarray
-    ) -> Tuple[np.ndarray]:
+    ) -> np.ndarray:
         assert is_image(reference_image)
         assert is_rotation_matrix(initial_R)
         assert is_translation_vector(initial_t)
-        R, t = self._recreate_pose(reference_image, initial_R, initial_t)
-        assert is_rotation_matrix(R)
-        assert is_translation_vector(t)
-        return R, t
+        self.camera_rig.set_position(initial_R, initial_t)
+        recreation_image = self._recreate_image(reference_image)
+        assert is_image(recreation_image)
+        return recreation_image
 
     @abstractmethod
-    def _recreate_pose(
-        self, reference_image: np.ndarray, initial_R: np.ndarray, initial_t: np.ndarray
-    ) -> Tuple[np.ndarray]:
+    def _recreate_image(self, reference_image: np.ndarray) -> np.ndarray:
         raise Exception("Not implemented.")
