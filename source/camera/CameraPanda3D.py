@@ -53,6 +53,7 @@ class CameraPanda3D(ShowBase, Camera):
 
         # Get a frame from Panda3D.
         self.graphicsEngine.renderFrame()
+        self.graphicsEngine.renderFrame()
         display_region = self.camNode.getDisplayRegion(0)
         tex = display_region.getScreenshot()
         data = tex.getRamImage()
