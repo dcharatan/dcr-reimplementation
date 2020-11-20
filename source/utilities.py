@@ -7,7 +7,9 @@ def is_rotation_matrix(R: np.ndarray) -> bool:
         return False
 
     # Check that it's a rotation matrix.
-    return np.allclose(np.eye(3), R @ R.T) and np.allclose(np.linalg.det(R), 1)
+    return np.allclose(np.eye(3), R @ R.T, atol=1e-2) and np.allclose(
+        np.linalg.det(R), 1, atol=1e-4
+    )
 
 
 def is_translation_vector(t: np.ndarray) -> bool:
