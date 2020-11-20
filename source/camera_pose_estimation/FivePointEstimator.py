@@ -12,7 +12,6 @@ class FivePointEstimator(CameraPoseEstimator):
         # https://docs.opencv.org/master/da/de9/tutorial_py_epipolar_geometry.html
         sift = cv.SIFT_create()
         # find the keypoints and descriptors with SIFT
-        # from IPython import embed; embed()
         kp1, des1 = sift.detectAndCompute(image1, None)
         kp2, des2 = sift.detectAndCompute(image2, None)
         # FLANN parameters for nearest neighbor search
