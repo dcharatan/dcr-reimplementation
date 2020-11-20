@@ -23,7 +23,7 @@ class FengDynamicRelocalizer(DynamicRelocalizer):
         s_initial: float,
         s_min: float,
     ) -> None:
-        super(DynamicRelocalizer, self).__init__(camera_rig, camera_pose_estimator)
+        DynamicRelocalizer.__init__(self, camera_rig, camera_pose_estimator)
         assert isinstance(s_initial, float)
         assert isinstance(s_min, float)
         self.s_initial = s_initial
@@ -35,12 +35,12 @@ class FengDynamicRelocalizer(DynamicRelocalizer):
         """
 
         s = self.s_initial
-        t_previous = np.zeros((3,), dtype=np.float32)
+        t_previous = np.zeros((3,), dtype=np.float64)
 
         while s > self.s_min:
             current_image = self.camera_rig.capture_image()
             R, t = self.camera_pose_estimator.estimate_pose(
-                current_image, reference_image
+                current_image, reference_image, self.camera_rig.camera.get_K()
             )
             self.camera_rig.apply_rotation(R)
             if np.dot(t, t_previous) < 0:

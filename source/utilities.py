@@ -3,7 +3,7 @@ import numpy as np
 
 def is_rotation_matrix(R: np.ndarray) -> bool:
     # Check for the correct type and shape.
-    if not (isinstance(R, np.ndarray) and R.shape == (3, 3)):
+    if not (isinstance(R, np.ndarray) and R.shape == (3, 3) and R.dtype == np.float64):
         return False
 
     # Check that it's a rotation matrix.
@@ -11,7 +11,7 @@ def is_rotation_matrix(R: np.ndarray) -> bool:
 
 
 def is_translation_vector(t: np.ndarray) -> bool:
-    return isinstance(t, np.ndarray) and t.shape == (3,)
+    return isinstance(t, np.ndarray) and t.shape == (3,) and t.dtype == np.float64
 
 
 def is_image(image: np.ndarray) -> bool:
