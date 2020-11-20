@@ -26,14 +26,8 @@ class CameraPanda3D(ShowBase, Camera):
 
     def _convert_R(self, R: np.ndarray) -> np.ndarray:
         # Convert R to Panda3D's coordinate system.
-        R_converted = R.copy()
-        R_converted[1, 0] = R[2, 0]
-        R_converted[2, 0] = R[1, 0]
-        R_converted[0, 1] = R[0, 2]
-        R_converted[0, 2] = R[0, 1]
-        R_converted[1, 2] *= -1
-        R_converted[2, 1] *= -1
-
+        swap_yz = np.array([[1, 0, 0], [0, 0, 1], [0, 1, 0]])
+        R_converted = swap_yz.T @ R @ swap_yz
         assert is_rotation_matrix(R_converted)
         return R_converted
 
