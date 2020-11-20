@@ -1,9 +1,10 @@
-from direct.showbase.ShowBase import ShowBase
-from panda3d.core import WindowProperties, LQuaternionf
 import numpy as np
-from .Camera import Camera
 from typing import Tuple
 from scipy.spatial.transform import Rotation
+from direct.showbase.ShowBase import ShowBase
+from panda3d.core import WindowProperties, LQuaternionf
+from ..utilities import is_rotation_matrix
+from .Camera import Camera
 
 
 class CameraPanda3D(ShowBase, Camera):
@@ -23,7 +24,27 @@ class CameraPanda3D(ShowBase, Camera):
         props.setSize(image_shape[1], image_shape[0])
         self.win.requestProperties(props)
 
+    def _convert_R(self, R: np.ndarray) -> np.ndarray:
+        # Convert R to Panda3D's coordinate system.
+        R_converted = R.copy()
+        R_converted[1, 0] = R[2, 0]
+        R_converted[2, 0] = R[1, 0]
+        R_converted[0, 1] = R[0, 2]
+        R_converted[0, 2] = R[0, 1]
+        R_converted[1, 2] *= -1
+        R_converted[2, 1] *= -1
+
+        assert is_rotation_matrix(R_converted)
+        return R_converted
+
+    def _convert_t(self, t: np.ndarray) -> np.ndarray:
+        # Convert t to Panda3D's coordinate system.
+        return t[[0, 2, 1]]
+
     def _render_with_pose(self, R: np.ndarray, t: np.ndarray) -> np.ndarray:
+        R = self._convert_R(R)
+        t = self._convert_t(t)
+
         # Set the camera position.
         # SciPy quaternions are (x, y, z, w), but Panda3D quaternions are (w, x, y, z). #nice
         q = Rotation.from_matrix(R).as_quat()
