@@ -34,10 +34,6 @@ class FivePointEstimator(CameraPoseEstimator):
         pts1 = np.int32(pts1)
         pts2 = np.int32(pts2)
 
-        # Swapped these points -- this might have to be undone.
-        E, _ = cv.findEssentialMat(pts2, pts1, K)
-        _, R_est, t_est, _ = cv.recoverPose(E, pts2, pts1)
-
-        # This might also have to be undone.
-        swap_yz = np.array([[1, 0, 0], [0, 0, 1], [0, 1, 0]])
-        return swap_yz.T @ R_est @ swap_yz, swap_yz @ t_est.squeeze()
+        E, _ = cv.findEssentialMat(pts1, pts2, K)
+        _, R_est, t_est, _ = cv.recoverPose(E, pts1, pts2)
+        return R_est, t_est.squeeze()

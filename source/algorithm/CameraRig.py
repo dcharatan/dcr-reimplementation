@@ -33,7 +33,7 @@ class CameraRig:
 
     def apply_rotation(self, R: np.ndarray) -> None:
         assert is_rotation_matrix(R)
-        self.hand_R = R @ self.hand_R
+        self.hand_R = self.hand_R @ R
 
     def apply_translation(self, t: np.ndarray) -> None:
         assert is_translation_vector(t)
