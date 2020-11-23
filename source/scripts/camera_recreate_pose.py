@@ -27,11 +27,11 @@ def make_rotation_matrix(location, target, y_up):
     return np.stack([x, y, z], axis=1)
 
 
-tilted = np.array((0, 1, 1), dtype=np.float64)
+tilted = np.array((0, 1.0, 1.0), dtype=np.float64)
 tilted = tilted / np.linalg.norm(tilted)
 
 R_a = make_rotation_matrix(camera_location_a, camera_target_a, np.array((0, 1, 0)))
-R_b = make_rotation_matrix(camera_location_b, camera_target_b, np.array((0, -1, 0)))
+R_b = make_rotation_matrix(camera_location_b, camera_target_b, tilted)
 
 
 # Render the images.
@@ -46,3 +46,4 @@ rig = CameraRig(camera, np.eye(3), np.zeros((3,)))
 algo = FengDynamicRelocalizer(rig, fpe, 0.0, -1.0)
 recreation = algo.recreate_image(image_a, R_b, camera_location_b)
 cv2.imwrite("tmp_camera_image_a_recreation.png", recreation)
+print("Done!")
