@@ -21,6 +21,12 @@
             "type": "python",
             "request": "launch",
             "module": "source.scripts.5point_test",
+        },
+        {
+            "name": "Test Camera",
+            "type": "python",
+            "request": "launch",
+            "module": "source.scripts.test_camera",
         }
     ]
 }
