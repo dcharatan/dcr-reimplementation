@@ -27,8 +27,6 @@ class CameraBlender(Camera):
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
         process.wait()
 
-        # from IPython import embed; embed()
-
         # Collect the K matrix from stdout.
         # This is really hacky.
         k_matrix_index = None
