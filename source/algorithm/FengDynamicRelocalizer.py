@@ -58,7 +58,6 @@ class FengDynamicRelocalizer(DynamicRelocalizer):
             self.camera_rig.apply_translation(s * t)
             t_previous = t
 
-            
             i += 1
 
         return self.camera_rig.capture_image()

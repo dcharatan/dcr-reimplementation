@@ -2,6 +2,7 @@ from source.algorithm.FengDynamicRelocalizer import FengDynamicRelocalizer
 from source.algorithm.CameraRig import CameraRig
 from ..camera.CameraBlender import CameraBlender
 from ..camera_pose_estimation.FivePointEstimator import FivePointEstimator
+from ..plotting.plot_convergence import plot_t_convergence
 import numpy as np
 import cv2
 
@@ -45,4 +46,5 @@ rig = CameraRig(camera, np.eye(3), np.zeros((3,)))
 algo = FengDynamicRelocalizer(rig, fpe, 1.5, 0.05)
 recreation = algo.recreate_image(image_a, R_b, camera_location_b)
 cv2.imwrite("tmp_camera_image_a_recreation.png", recreation)
+plot_t_convergence(camera_location_a, rig.translation_log)
 print("Done!")
