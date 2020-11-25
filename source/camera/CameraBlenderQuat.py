@@ -8,7 +8,7 @@ import cv2
 import os
 
 
-class CameraBlender(Camera):
+class CameraBlenderQuat(Camera):
     file_name: str
 
     def __init__(self, image_shape: Tuple[int], file_name: str) -> None:
@@ -18,15 +18,15 @@ class CameraBlender(Camera):
         self.file_name = file_name
 
     def _render_with_pose(self, R: np.ndarray, t: np.ndarray) -> np.ndarray:
-        euler = Rotation.from_matrix(R).as_euler("xyz")
+        quat = Rotation.from_matrix(R).as_quat()
+        # print(quat)
 
         # Call the blender script.
         temp_image_location = "tmp_blender_image.png"
-        command = f'blender -b "{self.file_name}" -P source/camera/blender_script.py -- {temp_image_location} {self.image_shape[1]} {self.image_shape[0]} {euler[0]} {euler[1]} {euler[2]} {t[0]} {t[1]} {t[2]}'
+        command = f'blender -b "{self.file_name}" -P source/camera/blender_script_quat.py -- {temp_image_location} {self.image_shape[1]} {self.image_shape[0]} {quat[0]} {quat[1]} {quat[2]} {quat[3]} {t[0]} {t[1]} {t[2]}'
+        # from IPython import embed; embed()
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
         process.wait()
-
-        # from IPython import embed; embed()
 
         # Collect the K matrix from stdout.
         # This is really hacky.
