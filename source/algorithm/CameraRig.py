@@ -38,16 +38,16 @@ class CameraRig:
         self.hand_t = hand_t
         self.rotation_log = [self._get_eye_R()]
         self.translation_log = [self._get_eye_t()]
-    
+
     def _get_eye_R(self) -> np.ndarray:
         return self.hand_eye_R @ self.hand_R
-    
+
     def _get_eye_t(self) -> np.ndarray:
         return self.hand_eye_t + self.hand_t
 
     def apply_rotation(self, R: np.ndarray) -> None:
         assert is_rotation_matrix(R)
-        self.hand_R = self.hand_R @ R
+        self.hand_R = R @ self.hand_R
         self.rotation_log.append(self._get_eye_R())
 
     def apply_translation(self, t: np.ndarray) -> None:

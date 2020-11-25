@@ -18,7 +18,8 @@ class CameraBlender(Camera):
         self.file_name = file_name
 
     def _render_with_pose(self, R: np.ndarray, t: np.ndarray) -> np.ndarray:
-        euler = Rotation.from_matrix(R).as_euler("xyz")
+        pose_correction = convert_angles_to_matrix(180, 0, 0)
+        euler = Rotation.from_matrix(pose_correction @ R).as_euler("xyz")
 
         # Call the blender script.
         temp_image_location = "tmp_blender_image.png"
@@ -32,7 +33,7 @@ class CameraBlender(Camera):
         # This is really hacky.
         k_matrix_index = None
         k_matrix_elements = []
-        for line in iter(process.stdout.readline,''):
+        for line in iter(process.stdout.readline, ""):
             line = str(line)
             if k_matrix_index is not None:
                 number = line[2:-4]
@@ -42,7 +43,7 @@ class CameraBlender(Camera):
                     break
             if "K MATRIX INCOMING:" in line:
                 k_matrix_index = 0
-        
+
         self.K = np.array(k_matrix_elements).reshape((3, 3))
 
         # Read, remove and return the image.

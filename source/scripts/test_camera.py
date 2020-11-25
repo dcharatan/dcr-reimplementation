@@ -12,7 +12,9 @@ camera_location = np.array((0, 0, 30), dtype=np.float64)
 R = np.eye(3, dtype=np.float64)
 
 # Render the images.
-image_original = camera.render_with_pose(R, camera_location)
+image_original = camera.render_with_pose(
+    R @ convert_angles_to_matrix(180, 0, 0), camera_location
+)
 cv2.imwrite("tmp_original.png", image_original)
 
 tests = [
@@ -24,15 +26,12 @@ tests = [
 fpe = FivePointEstimator()
 for x, y, z, name in tests:
     # Print out the starting location.
-    R_test = convert_angles_to_matrix(x, y, z)
+    R_test = convert_angles_to_matrix(x, y, z) @ convert_angles_to_matrix(180, 0, 0)
     image_test = camera.render_with_pose(R_test, camera_location)
     cv2.imwrite(f"tmp_{name}.png", image_test)
 
     # Estimate pose.
-    R, t = fpe.estimate_pose(image_test, image_original, camera.get_K())
-
-    x, y, z = Rotation.from_matrix(R).as_euler("xyz")
-    R = Rotation.from_euler("xyz", (-x, y, z)).as_matrix()
+    R, t = fpe.estimate_pose(image_original, image_test, camera.get_K())
 
     # Apply the pose estimate.
     R_test_corrected = R @ R_test
