@@ -19,7 +19,7 @@ class CameraBlender(Camera):
 
     def _render_with_pose(self, R: np.ndarray, t: np.ndarray) -> np.ndarray:
         pose_correction = convert_angles_to_matrix(180, 0, 0)
-        euler = Rotation.from_matrix(pose_correction @ R).as_euler("xyz")
+        euler = Rotation.from_matrix(R @ pose_correction).as_euler("xyz")
 
         # Call the blender script.
         temp_image_location = "tmp_blender_image.png"
