@@ -11,9 +11,9 @@ camera = CameraBlender((1200, 1600, 3), "data/blender-scenes/spring.blend")
 # Define the camera's position.
 # In Panda3D, the camera looks along the positive Y axis, and camera up is negative Z. #nice
 camera_location_a = np.array((9, -8, 9), dtype=np.float64)
-camera_location_b = np.array((9, -8, 9), dtype=np.float64)
+camera_location_b = np.array((8, -7, 8), dtype=np.float64)
 camera_target_a = np.array((0, 0, 0), dtype=np.float64)
-camera_target_b = np.array((0, 0, 0), dtype=np.float64)
+camera_target_b = np.array((1, 1, 1), dtype=np.float64)
 
 # Make a rotation matrix.
 def make_rotation_matrix(location, target, y_up):
@@ -42,7 +42,7 @@ cv2.imwrite("tmp_initial_pose.png", image_b)
 # Run Feng's algorithm.
 fpe = FivePointEstimator()
 rig = CameraRig(camera, np.eye(3), np.zeros((3,)))
-algo = FengDynamicRelocalizer(rig, fpe, 0.0, -1.0)
+algo = FengDynamicRelocalizer(rig, fpe, 1.5, 0.05)
 recreation = algo.recreate_image(image_a, R_b, camera_location_b)
 cv2.imwrite("tmp_camera_image_a_recreation.png", recreation)
 print("Done!")
