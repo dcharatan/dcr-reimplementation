@@ -4,6 +4,7 @@ from ..utilities import (
     make_rotation_matrix,
 )
 import cv2
+import numpy as np
 
 # Create the camera.
 camera = CameraBlender((1200, 1600, 3), "data/blender-scenes/spring.blend")
