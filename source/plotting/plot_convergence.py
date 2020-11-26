@@ -9,6 +9,7 @@ def plot_t_convergence(
 ):
     fig, ax = plt.subplots()
     plt.title("Convergence of t")
+    plt.grid(True)
 
     t_offset = np.stack(translation_log) - target_translation
 
@@ -24,22 +25,24 @@ def plot_t_convergence(
 
 
 def plot_r_convergence(target_rotation: np.ndarray, rotation_log: List[np.ndarray]):
+    to_euler = lambda x: Rotation.from_matrix(x).as_euler("xyz")
+
     fig, ax = plt.subplots()
     plt.title("Convergence of R")
-    euler_rot_log = []
-    for r_mat in rotation_log:
-        euler_rot_log.append(Rotation.from_matrix(r_mat).as_euler("xyz"))
-    euler_rot_log = np.ndarray(euler_rot_log)
+    plt.grid(True)
+    euler_log = []
+    for rotation in rotation_log:
+        euler_log.append(to_euler(rotation))
+    euler_log = np.stack(euler_log)
 
-    euler_target_location = Rotation.from_matrix(target_rotation).as_euler("xyz")
+    euler_target = Rotation.from_matrix(target_rotation).as_euler("xyz")
 
-    r_offset = np.stack(translation_log) - target_translation
-
+    r_offset = (np.stack(euler_log) - euler_target) * 180 / 3.141
     for axis in range(3):
         ax.plot(r_offset[:, axis])
 
     ax.set_xlabel("Optimization Iteration")
-    ax.set_ylabel("Angular Difference to Ground Truth")
+    ax.set_ylabel("Angular Difference to Ground Truth (degrees)")
     ax.legend(["X_rot", "Y_rot", "Z_rot"])
 
     plt.savefig("tmp_r_plot.png")
