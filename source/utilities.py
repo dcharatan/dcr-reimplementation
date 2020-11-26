@@ -56,3 +56,18 @@ def convert_angles_to_matrix(
     )
 
     return np.matmul(z_matrix, np.matmul(y_matrix, x_matrix))
+
+
+def make_rotation_matrix(location, target):
+    """Make a rotation matrix for a camera at location that's pointing towards
+    target. This assumes that up is (0, 0, -1) like it is in OpenCV.
+    """
+    y_up = np.array([0, 0, -1])
+    camera_to_target = target - location
+    z = camera_to_target
+    z /= np.linalg.norm(z)
+    x = np.cross(y_up, z)
+    x /= np.linalg.norm(x)
+    y = np.cross(z, x)
+    y /= np.linalg.norm(y)
+    return np.stack([x, y, z], axis=1)
