@@ -17,8 +17,9 @@ camera_target_a = np.array((0, 0, 0), dtype=np.float64)
 camera_target_b = np.array((0, 0, 0), dtype=np.float64)
 
 # Make a rotation matrix.
-def make_rotation_matrix(location, target, y_up):
-    camera_to_target = -(target - location)
+def make_rotation_matrix(location, target):
+    y_up = np.array([0, 0, -1])
+    camera_to_target = target - location
     z = camera_to_target
     z /= np.linalg.norm(z)
     x = np.cross(y_up, z)
@@ -31,8 +32,8 @@ def make_rotation_matrix(location, target, y_up):
 tilted = np.array((-1, 0, -1), dtype=np.float64)
 tilted = tilted / np.linalg.norm(tilted)
 
-R_a = make_rotation_matrix(camera_location_a, camera_target_a, np.array((0, 0, -1)))
-R_b = make_rotation_matrix(camera_location_b, camera_target_b, tilted)
+R_a = make_rotation_matrix(camera_location_a, camera_target_a)
+R_b = make_rotation_matrix(camera_location_b, camera_target_b)
 
 # Render the images.
 image_a = camera.render_with_pose(R_a, camera_location_a)
