@@ -27,6 +27,7 @@ cv2.imwrite("tmp_initial_pose.png", image_b)
 # Run Feng's algorithm.
 fpe = FivePointEstimator()
 rig = CameraRig(camera, np.eye(3), np.zeros((3,)))
+rig.set_up_oracle(camera_location_a)
 algo = FengDynamicRelocalizer(rig, fpe, 1.0, 0.05)
 try:
     recreation = algo.recreate_image(image_a, R_b, camera_location_b)
