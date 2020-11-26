@@ -35,6 +35,18 @@
             "type": "python",
             "request": "launch",
             "module": "source.scripts.test_camera",
+        },
+        {
+            "name": "Test Pose Application",
+            "type": "python",
+            "request": "launch",
+            "module": "source.scripts.test_pose_application",
+        },
+        {
+            "name": "Rotation Test",
+            "type": "python",
+            "request": "launch",
+            "module": "source.scripts.test_camera_rotation",
         }
     ]
 }
