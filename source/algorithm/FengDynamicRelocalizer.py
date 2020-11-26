@@ -46,16 +46,11 @@ class FengDynamicRelocalizer(DynamicRelocalizer):
             current_image = self.camera_rig.capture_image()
             cv2.imwrite(f"tmp_estimation_{i}.png", current_image)
             R, t = self.camera_pose_estimator.estimate_pose(
-                current_image, reference_image, self.camera_rig.camera.get_K()
+                reference_image, current_image, self.camera_rig.camera.get_K()
             )
-
-            x, y, z = Rotation.from_matrix(R).as_euler("xyz")
-            R = Rotation.from_euler("xyz", (-x, y, z)).as_matrix()
-
-            self.camera_rig.apply_rotation(R)
             if np.dot(t, t_previous) < 0:
                 s /= 2
-            self.camera_rig.apply_translation(s * t)
+            self.camera_rig.apply_R_and_t(R, s * t)
             t_previous = t
 
             i += 1
