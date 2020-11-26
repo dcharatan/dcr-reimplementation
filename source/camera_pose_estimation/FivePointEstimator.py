@@ -26,7 +26,7 @@ class FivePointEstimator(CameraPoseEstimator):
 
         # Ratio test as per Lowe's paper
         for i, (m, n) in enumerate(matches):
-            if m.distance < 0.5 * n.distance:
+            if m.distance < 0.65 * n.distance:
                 good.append(m)
                 pts2.append(kp2[m.trainIdx].pt)
                 pts1.append(kp1[m.queryIdx].pt)
@@ -38,5 +38,6 @@ class FivePointEstimator(CameraPoseEstimator):
         E, _ = cv.findEssentialMat(
             pts1, pts2, cameraMatrix=K, method=cv.LMEDS, prob=0.999999999999
         )
+
         _, R_est, t_est, _ = cv.recoverPose(E, pts1, pts2)
         return R_est, t_est.squeeze()
