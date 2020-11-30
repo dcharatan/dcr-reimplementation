@@ -54,5 +54,6 @@ class FengDynamicRelocalizer(DynamicRelocalizer):
             t_previous = t
 
             i += 1
+            print("Current s value: " + str(s))
 
         return self.camera_rig.capture_image()
