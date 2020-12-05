@@ -54,6 +54,7 @@ class FengDynamicRelocalizer(DynamicRelocalizer):
             t_previous = t
 
             i += 1
+            print("Current s value: " + str(s))
 
             if i == 100:
                 break
