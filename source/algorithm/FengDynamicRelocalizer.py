@@ -55,4 +55,7 @@ class FengDynamicRelocalizer(DynamicRelocalizer):
 
             i += 1
 
+            if i == 100:
+                break
+
         return self.camera_rig.capture_image()
