@@ -1,5 +1,6 @@
 import numpy as np
 import cv2 as cv
+from matplotlib import pyplot as plt
 
 # Note: Lower AFD is better
 def computeAFD(image_ref: np.ndarray, image_curr: np.ndarray) -> float:

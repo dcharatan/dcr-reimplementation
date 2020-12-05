@@ -4,8 +4,6 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-
-    
         {
             "name": "Render Camera Image",
             "type": "python",
@@ -47,6 +45,12 @@
             "type": "python",
             "request": "launch",
             "module": "source.scripts.test_camera_rotation",
+        },
+        {
+            "name": "Negative t test",
+            "type": "python",
+            "request": "launch",
+            "module": "source.scripts.negative_t_test",
         }
     ]
 }
