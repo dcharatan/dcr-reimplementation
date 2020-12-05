@@ -32,12 +32,11 @@ rig = CameraRig(
     np.array([0.2, 0.1, 0.4], dtype=np.float64),
 )
 rig.set_up_oracle(camera_location_a)
-algo = FengDynamicRelocalizer(rig, fpe, 1.0, 0.05)
-try:
-    recreation = algo.recreate_image(image_a, R_b, camera_location_b)
-    cv2.imwrite("tmp_camera_image_a_recreation.png", recreation)
-except:
-    pass
-plot_t_convergence(camera_location_a, rig.translation_log)
+algo = FengDynamicRelocalizer(rig, fpe, 2.0, 0.05)
+
+s_log, recreation = algo.recreate_image(image_a, R_b, camera_location_b)
+cv2.imwrite("tmp_camera_image_a_recreation.png", recreation)
+
+plot_t_convergence(camera_location_a, rig.translation_log, s_log)
 plot_r_convergence(R_a, rig.rotation_log)
 print("Done!")

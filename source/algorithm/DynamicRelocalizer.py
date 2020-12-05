@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Tuple
+from typing import Tuple, List
 from .CameraRig import CameraRig
 from ..camera_pose_estimation.CameraPoseEstimator import CameraPoseEstimator
 from ..utilities import is_rotation_matrix, is_translation_vector, is_image
@@ -23,15 +23,15 @@ class DynamicRelocalizer(ABC):
 
     def recreate_image(
         self, reference_image: np.ndarray, initial_R: np.ndarray, initial_t: np.ndarray
-    ) -> np.ndarray:
+    ) -> (List[float], np.ndarray):
         assert is_image(reference_image)
         assert is_rotation_matrix(initial_R)
         assert is_translation_vector(initial_t)
         self.camera_rig.set_position(initial_R, initial_t)
-        recreation_image = self._recreate_image(reference_image)
+        s_log, recreation_image = self._recreate_image(reference_image)
         assert is_image(recreation_image)
-        return recreation_image
+        return (s_log, recreation_image)
 
     @abstractmethod
-    def _recreate_image(self, reference_image: np.ndarray) -> np.ndarray:
+    def _recreate_image(self, reference_image: np.ndarray) -> (List[float], np.ndarray):
         raise Exception("Not implemented.")

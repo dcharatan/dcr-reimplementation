@@ -7,6 +7,7 @@ from typing import Tuple
 import numpy as np
 import cv2
 from ..utilities import convert_angles_to_matrix
+from typing import List
 
 
 class FengDynamicRelocalizer(DynamicRelocalizer):
@@ -32,12 +33,13 @@ class FengDynamicRelocalizer(DynamicRelocalizer):
         self.s_initial = s_initial
         self.s_min = s_min
 
-    def _recreate_image(self, reference_image: np.ndarray) -> np.ndarray:
+    def _recreate_image(self, reference_image: np.ndarray) -> (List[float], np.ndarray):
         """This is Feng's algorithm, as described in Algorithm 1. Assume that
         homography-based coarse camera relocalization has already been done.
         """
 
         s = self.s_initial
+        s_log = [s]
         t_previous = np.zeros((3,), dtype=np.float64)
 
         i = 0
@@ -54,9 +56,10 @@ class FengDynamicRelocalizer(DynamicRelocalizer):
             t_previous = t
 
             i += 1
+            s_log = s_log + [s]
             print("Current s value: " + str(s))
 
-            if i == 100:
+            if i == 30:
                 break
 
-        return self.camera_rig.capture_image()
+        return (s_log, self.camera_rig.capture_image())

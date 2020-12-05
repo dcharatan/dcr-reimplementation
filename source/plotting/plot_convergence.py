@@ -5,20 +5,29 @@ from scipy.spatial.transform import Rotation
 
 
 def plot_t_convergence(
-    target_translation: np.ndarray, translation_log: List[np.ndarray]
+    target_translation: np.ndarray,
+    translation_log: List[np.ndarray],
+    s_log: List[float],
 ):
     fig, ax = plt.subplots()
     plt.title("Convergence of t")
     plt.grid(True)
 
+    # Compute the offset of each of the translations in the log w.r.t the target
     t_offset = np.stack(translation_log) - target_translation
 
-    for axis in range(3):
-        ax.plot(t_offset[:, axis])
+    # Compute -s for display purposes
+    minus_s = [-elem for elem in s_log]
+
+    ax.plot(t_offset[:, 0], "r")
+    ax.plot(t_offset[:, 1], "g")
+    ax.plot(t_offset[:, 2], "b")
+    ax.plot(s_log, "k")
+    ax.plot(minus_s, "k")
 
     ax.set_xlabel("Optimization Iteration")
     ax.set_ylabel("Distance to Ground Truth")
-    ax.legend(["X", "Y", "Z"])
+    ax.legend(["X", "Y", "Z", "Step size s"])
 
     plt.savefig("tmp_t_plot.png")
     plt.close(fig)
