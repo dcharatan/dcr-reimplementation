@@ -47,7 +47,7 @@ rig = CameraRig(
     settings["hand_eye_translation"],
 )
 rig.set_up_oracle(reference_location)
-pose_logger = PoseLogger()
+pose_logger = PoseLogger(settings["save_folder"])
 algo = FengDynamicRelocalizer(
     rig, fpe, settings["s_initial"], settings["s_min"], pose_logger
 )
@@ -57,6 +57,14 @@ cv2.imwrite(with_folder("tmp_recreated_pose.png"), recreation)
 pose_logger.save(
     with_folder("tmp_intermediate_poses.npz"), R_reference, reference_location
 )
-plot_t_convergence(reference_location, rig.translation_log, s_log)
-plot_r_convergence(R_reference, rig.rotation_log)
+plot_t_convergence(
+    reference_location,
+    rig.translation_log,
+    s_log,
+    None,
+    with_folder("tmp_t_convergence.png"),
+)
+plot_r_convergence(
+    R_reference, rig.rotation_log, None, with_folder("tmp_R_convergence.png")
+)
 print("Done!")

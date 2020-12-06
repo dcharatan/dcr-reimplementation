@@ -41,9 +41,6 @@ class FengDynamicRelocalizer(DynamicRelocalizer):
         """This is Feng's algorithm, as described in Algorithm 1. Assume that
         homography-based coarse camera relocalization has already been done.
         """
-        if self.pose_logger is not None:
-            self.pose_logger.log_position(self.camera_rig)
-
         s = self.s_initial
         s_log = [s]
         t_previous = np.zeros((3,), dtype=np.float64)
@@ -52,7 +49,10 @@ class FengDynamicRelocalizer(DynamicRelocalizer):
 
         while s > self.s_min:
             current_image = self.camera_rig.capture_image()
-            cv2.imwrite(f"tmp_estimation_{i}.png", current_image)
+
+            if self.pose_logger is not None:
+                self.pose_logger.log_position(self.camera_rig, current_image)
+
             R, t = self.camera_pose_estimator.estimate_pose(
                 reference_image, current_image, self.camera_rig.camera.get_K()
             )
@@ -61,14 +61,14 @@ class FengDynamicRelocalizer(DynamicRelocalizer):
             self.camera_rig.apply_R_and_t(R, s * t)
             t_previous = t
 
-            if self.pose_logger is not None:
-                self.pose_logger.log_position(self.camera_rig)
-
             i += 1
             s_log = s_log + [s]
             print("Current s value: " + str(s))
 
             if i == 30:
                 break
+
+        if self.pose_logger is not None:
+            self.pose_logger.log_position(self.camera_rig, current_image)
 
         return s_log, self.camera_rig.capture_image()

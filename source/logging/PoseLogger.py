@@ -1,4 +1,6 @@
 import numpy as np
+import os
+import cv2
 from typing import List
 from ..algorithm.CameraRig import CameraRig
 from ..utilities import is_rotation_matrix, is_translation_vector
@@ -7,12 +9,18 @@ from ..utilities import is_rotation_matrix, is_translation_vector
 class PoseLogger:
     R_log: List[np.ndarray]
     t_log: List[np.ndarray]
+    folder: str
 
-    def __init__(self):
+    def __init__(self, folder: str):
         self.R_log = []
         self.t_log = []
+        self.folder = folder
 
-    def log_position(self, camera_rig: CameraRig):
+    def log_position(self, camera_rig: CameraRig, image: np.ndarray):
+        cv2.imwrite(
+            os.path.join(self.folder, f"tmp_intermediate_pose_{len(self.R_log)}.png"),
+            image,
+        )
         self.R_log.append(camera_rig.get_eye_R())
         self.t_log.append(camera_rig.get_eye_t())
 
