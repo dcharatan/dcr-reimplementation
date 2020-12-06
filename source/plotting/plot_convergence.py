@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 from typing import List, Optional
 import numpy as np
 from scipy.spatial.transform import Rotation
+import math
 
 
 def plot_t_convergence(
@@ -16,7 +17,8 @@ def plot_t_convergence(
     plt.grid(True)
 
     # Compute the offset of each of the translations in the log w.r.t the target
-    t_offset = np.stack(translation_log) - target_translation
+    # t_offset = np.stack(translation_log) - target_translation
+    t_offset = np.array(translation_log)
 
     ax.plot(t_offset[:, 0], "r")
     ax.plot(t_offset[:, 1], "g")
@@ -26,7 +28,7 @@ def plot_t_convergence(
         ax.plot([-s for s in s_log], "k")
 
     ax.set_xlabel("Optimization Iteration")
-    ax.set_ylabel("Distance to Ground Truth")
+    ax.set_ylabel("Magnitude of Translation")
     ax.legend(["X", "Y", "Z", "Step size s"])
 
     if x_line_position:
@@ -48,19 +50,30 @@ def plot_r_convergence(
     plt.title("Convergence of R")
     plt.grid(True)
     euler_log = []
+
     for rotation in rotation_log:
         euler_log.append(to_euler(rotation))
+
     euler_log = np.stack(euler_log)
+    # euler_target = Rotation.from_matrix(target_rotation).as_euler("xyz")
+    # r_offset = (np.stack(euler_log) - euler_target) * 180 / 3.141
+    r_offset = euler_log * 180 / 3.141
 
-    euler_target = Rotation.from_matrix(target_rotation).as_euler("xyz")
+    theta_log = [
+        (math.acos((np.trace(R_a) - 1) / 2) * 180 / 3.141) for R_a in rotation_log
+    ]
+    neg_theta_log = [-theta for theta in theta_log]
 
-    r_offset = (np.stack(euler_log) - euler_target) * 180 / 3.141
-    for axis in range(3):
-        ax.plot(r_offset[:, axis])
+    # Plot the rotation curves
+    ax.plot(r_offset[:, 0], "r")
+    ax.plot(r_offset[:, 1], "g")
+    ax.plot(r_offset[:, 2], "b")
+    ax.plot(neg_theta_log, "k")
+    ax.plot(theta_log, "k")
 
     ax.set_xlabel("Optimization Iteration")
-    ax.set_ylabel("Angular Difference to Ground Truth (degrees)")
-    ax.legend(["X_rot", "Y_rot", "Z_rot"])
+    ax.set_ylabel("Magnitude of Rotation (degrees)")
+    ax.legend(["X_rot", "Y_rot", "Z_rot", "\u03B8"])
 
     if x_line_position:
         plt.axvline(x=x_line_position)
