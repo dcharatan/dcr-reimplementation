@@ -10,4 +10,8 @@ The recommended way to edit and run this project is through VS Code. If you're u
 
 ## Acknowledgements
 
-The scene `spring.blend` was created by Free3D user [Nerman Turkić](https://free3d.com/user/nerman3).
+We thank the creators of the many Blender scenes we used:
+
+- The scene `spring.blend` was created by Free3D user [Nerman Turkić](https://free3d.com/user/nerman3).
+- The scene `forest.blend` was created by CGTrader user [LeylaRanjbar](https://www.cgtrader.com/boxgroup).
+- The scene `tram.blend` is a Blender demo scene created by [Dedouze (Andry Rasoahaingo)](https://dedouze.com/).
