@@ -11,16 +11,46 @@
             "module": "source.scripts.camera_render",
         },
         {
-            "name": "Test Pose Estimation With Synthetic Images",
+            "name": "Run Pose Estimation With Synthetic Images",
             "type": "python",
             "request": "launch",
             "module": "source.scripts.camera_recreate_pose",
+        },
+        {
+            "name": "Animate Pose Estimation Log",
+            "type": "python",
+            "request": "launch",
+            "module": "source.scripts.animate_pose_recreation",
         },
         {
             "name": "Test Five Point Solver",
             "type": "python",
             "request": "launch",
             "module": "source.scripts.5point_test",
+        },
+        {
+            "name": "Test Camera",
+            "type": "python",
+            "request": "launch",
+            "module": "source.scripts.test_camera",
+        },
+        {
+            "name": "Test Pose Application",
+            "type": "python",
+            "request": "launch",
+            "module": "source.scripts.test_pose_application",
+        },
+        {
+            "name": "Rotation Test",
+            "type": "python",
+            "request": "launch",
+            "module": "source.scripts.test_camera_rotation",
+        },
+        {
+            "name": "Negative t test",
+            "type": "python",
+            "request": "launch",
+            "module": "source.scripts.negative_t_test",
         }
     ]
 }
