@@ -1,5 +1,7 @@
 # Reimplementation of 6D Dynamic Camera Relocalization from Single Reference Image
 
+![](spring.gif)
+
 ## Project Setup
 
 To set up this project's virtual environment, navigate to the root directory (the one this file is in) and run `python3 -m venv venv` to create a virtual environment. Then, do `source venv/bin/activate` on MacOS/Linux or run `venv\Scripts\activate` on Windows to enter this virtual environment. Finally, do `pip3 install -r requirements.txt` to install this project's dependencies. Make sure you're in the project's virtual environment when trying to run any of the project files.
