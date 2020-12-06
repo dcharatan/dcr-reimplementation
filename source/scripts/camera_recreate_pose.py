@@ -4,6 +4,7 @@ from ..camera.CameraBlender import CameraBlender
 from ..camera_pose_estimation.FivePointEstimator import FivePointEstimator
 from ..plotting.plot_convergence import plot_t_convergence, plot_r_convergence
 from ..utilities import make_rotation_matrix, convert_angles_to_matrix
+from ..logging.PoseLogger import PoseLogger
 import numpy as np
 import cv2
 
@@ -32,11 +33,12 @@ rig = CameraRig(
     np.array([0.2, 0.1, 0.4], dtype=np.float64),
 )
 rig.set_up_oracle(camera_location_a)
-algo = FengDynamicRelocalizer(rig, fpe, 2.0, 0.05)
+pose_logger = PoseLogger()
+algo = FengDynamicRelocalizer(rig, fpe, 2.0, 0.05, pose_logger)
 
 s_log, recreation = algo.recreate_image(image_a, R_b, camera_location_b)
-cv2.imwrite("tmp_camera_image_a_recreation.png", recreation)
-
+cv2.imwrite("tmp_recreated_pose.png", recreation)
+pose_logger.save("tmp_intermediate_poses.npz")
 plot_t_convergence(camera_location_a, rig.translation_log, s_log)
 plot_r_convergence(R_a, rig.rotation_log)
 print("Done!")

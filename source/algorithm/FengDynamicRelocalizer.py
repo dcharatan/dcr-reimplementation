@@ -3,7 +3,8 @@ from .DynamicRelocalizer import DynamicRelocalizer
 from ..camera_pose_estimation.CameraPoseEstimator import CameraPoseEstimator
 from scipy.spatial.transform import Rotation
 from .CameraRig import CameraRig
-from typing import Tuple
+from ..logging.PoseLogger import PoseLogger
+from typing import Tuple, Optional
 import numpy as np
 import cv2
 from ..utilities import convert_angles_to_matrix
@@ -26,8 +27,11 @@ class FengDynamicRelocalizer(DynamicRelocalizer):
         camera_pose_estimator: CameraPoseEstimator,
         s_initial: float,
         s_min: float,
+        pose_logger: Optional[PoseLogger],
     ) -> None:
-        DynamicRelocalizer.__init__(self, camera_rig, camera_pose_estimator)
+        DynamicRelocalizer.__init__(
+            self, camera_rig, camera_pose_estimator, pose_logger
+        )
         assert isinstance(s_initial, float)
         assert isinstance(s_min, float)
         self.s_initial = s_initial
@@ -37,6 +41,8 @@ class FengDynamicRelocalizer(DynamicRelocalizer):
         """This is Feng's algorithm, as described in Algorithm 1. Assume that
         homography-based coarse camera relocalization has already been done.
         """
+        if self.pose_logger is not None:
+            self.pose_logger.log_position(self.camera_rig)
 
         s = self.s_initial
         s_log = [s]
@@ -55,6 +61,9 @@ class FengDynamicRelocalizer(DynamicRelocalizer):
             self.camera_rig.apply_R_and_t(R, s * t)
             t_previous = t
 
+            if self.pose_logger is not None:
+                self.pose_logger.log_position(self.camera_rig)
+
             i += 1
             s_log = s_log + [s]
             print("Current s value: " + str(s))
@@ -62,4 +71,4 @@ class FengDynamicRelocalizer(DynamicRelocalizer):
             if i == 30:
                 break
 
-        return (s_log, self.camera_rig.capture_image())
+        return s_log, self.camera_rig.capture_image()

@@ -37,8 +37,8 @@ class CameraRig:
         self.oracle_target = oracle_target
 
     def oracle(self, delta):
-        positive = np.linalg.norm(self._get_eye_t() + delta - self.oracle_target)
-        negative = np.linalg.norm(self._get_eye_t() - delta - self.oracle_target)
+        positive = np.linalg.norm(self.get_eye_t() + delta - self.oracle_target)
+        negative = np.linalg.norm(self.get_eye_t() - delta - self.oracle_target)
         return -delta if positive > negative else delta
 
     def set_position(self, hand_R: np.ndarray, hand_t: np.ndarray) -> None:
@@ -46,13 +46,13 @@ class CameraRig:
         assert is_translation_vector(hand_t)
         self.hand_R = hand_R
         self.hand_t = hand_t
-        self.rotation_log = [self._get_eye_R()]
-        self.translation_log = [self._get_eye_t()]
+        self.rotation_log = [self.get_eye_R()]
+        self.translation_log = [self.get_eye_t()]
 
-    def _get_eye_R(self) -> np.ndarray:
+    def get_eye_R(self) -> np.ndarray:
         return self.hand_R @ self.hand_eye_R
 
-    def _get_eye_t(self) -> np.ndarray:
+    def get_eye_t(self) -> np.ndarray:
         return self.hand_eye_R @ self.hand_eye_t + self.hand_t
 
     def apply_R_and_t(self, R: np.ndarray, t: np.ndarray) -> None:
@@ -60,8 +60,8 @@ class CameraRig:
         assert is_translation_vector(t)
         self.hand_t += self.oracle(self.hand_R @ t)
         self.hand_R = self.hand_R @ R
-        self.rotation_log.append(self._get_eye_R())
-        self.translation_log.append(self._get_eye_t())
+        self.rotation_log.append(self.get_eye_R())
+        self.translation_log.append(self.get_eye_t())
 
     def capture_image(self) -> np.ndarray:
-        return self.camera.render_with_pose(self._get_eye_R(), self._get_eye_t())
+        return self.camera.render_with_pose(self.get_eye_R(), self.get_eye_t())
