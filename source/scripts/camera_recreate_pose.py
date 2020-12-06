@@ -9,6 +9,8 @@ from .SettingsLoader import SettingsLoader
 import os
 import numpy as np
 import cv2
+import git
+import json
 from pathlib import Path
 
 SETTINGS_FILE = "data/blender-scenes/forest.json"
@@ -20,6 +22,17 @@ Path(settings["save_folder"]).mkdir(parents=True, exist_ok=True)
 
 def with_folder(file_name: str):
     return os.path.join(settings["save_folder"], file_name)
+
+
+# To make a set of results more reproducible, copy the settings to the results
+# folder along with the current commit hash.
+with open(SETTINGS_FILE, "r") as f:
+    settings_json = json.load(f)
+settings_json["commit_hexsha"] = git.Repo(
+    search_parent_directories=True
+).head.object.hexsha
+with open(with_folder("tmp_settings.json"), "w") as f:
+    json.dump(settings_json, f)
 
 
 # Create the camera.
