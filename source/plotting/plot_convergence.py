@@ -19,6 +19,7 @@ def plot_t_convergence(
     # Compute the offset of each of the translations in the log w.r.t the target
     # t_offset = np.stack(translation_log) - target_translation
     t_offset = np.array(translation_log)
+    t_offset = t_offset[1:] - t_offset[:-1]
 
     ax.plot(t_offset[:, 0], "r")
     ax.plot(t_offset[:, 1], "g")
@@ -32,7 +33,7 @@ def plot_t_convergence(
     ax.legend(["X", "Y", "Z", "Step size s"])
 
     if x_line_position:
-        plt.axvline(x=x_line_position)
+        plt.axvline(x=x_line_position, color="k")
 
     plt.savefig("tmp_t_plot.png" if file_name is None else file_name)
     plt.close(fig)
@@ -55,13 +56,13 @@ def plot_r_convergence(
         euler_log.append(to_euler(rotation))
 
     euler_log = np.stack(euler_log)
-    # euler_target = Rotation.from_matrix(target_rotation).as_euler("xyz")
-    # r_offset = (np.stack(euler_log) - euler_target) * 180 / 3.141
-    r_offset = euler_log * 180 / 3.141
+    r_offset = euler_log[1:] - euler_log[:-1]
+    r_offset_matrix = [Rotation.from_euler("xyz", r).as_matrix() for r in r_offset]
 
     theta_log = [
-        (math.acos((np.trace(R_a) - 1) / 2) * 180 / 3.141) for R_a in rotation_log
+        (math.acos((np.trace(R) - 1) / 2) * 180 / 3.141) for R in r_offset_matrix
     ]
+    r_offset *= 180 / 3.141
     neg_theta_log = [-theta for theta in theta_log]
 
     # Plot the rotation curves
@@ -73,10 +74,10 @@ def plot_r_convergence(
 
     ax.set_xlabel("Optimization Iteration")
     ax.set_ylabel("Magnitude of Rotation (degrees)")
-    ax.legend(["X_rot", "Y_rot", "Z_rot", "\u03B8"])
+    ax.legend(["X", "Y", "Z", "\u03B8"])
 
     if x_line_position:
-        plt.axvline(x=x_line_position)
+        plt.axvline(x=x_line_position, color="k")
 
     plt.savefig("tmp_r_plot.png" if file_name is None else file_name)
     plt.close(fig)
