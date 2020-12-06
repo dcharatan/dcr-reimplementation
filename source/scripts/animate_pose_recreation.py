@@ -3,20 +3,27 @@ import cv2
 from scipy.spatial.transform import Rotation, Slerp
 from ..camera.CameraBlender import CameraBlender
 from ..plotting.plot_convergence import plot_t_convergence, plot_r_convergence
+from ..plotting.plot_feature_distance import plot_feature_distance
 
+# Settings go here.
 pose_file = "tmp_intermediate_poses.npz"
 frames_per_pose = 15
 camera = CameraBlender((1000, 1160, 3), "data/blender-scenes/spring.blend")
-render_plots = True
+save_images = False
+render_plots = False
+render_feature_distance = True
 smoothing = 2.2
 
 # Load the intermediate poses.
 poses = np.load(pose_file)
 R_log = poses["R_log"]
 t_log = poses["t_log"]
+R_target = poses["R_target"]
+t_target = poses["t_target"]
 assert R_log.shape[0] == t_log.shape[0]
 num_poses = R_log.shape[0]
 frame_index = 0
+reference = camera.render_with_pose(R_target, t_target)
 
 # Define linear interpolation functions.
 def interpolate_t(t_left, t_right, t):
@@ -39,25 +46,33 @@ def smooth(t):
 # Define a camera rendering helper.
 def render(R, t, time):
     global frame_index
+    global reference
 
     # Render the image.
     image = camera.render_with_pose(R, t)
-    cv2.imwrite(f"tmp_animation_frame_{frame_index}.png", image)
+    if save_images:
+        cv2.imwrite(f"tmp_animation_frame_{frame_index}.png", image)
 
     # Render the plots.
     if render_plots:
         plot_t_convergence(
-            poses["t_target"],
+            t_target,
             t_log,
             None,
             time,
             f"tmp_t_plot_{frame_index}.png",
         )
         plot_r_convergence(
-            poses["R_target"],
+            R_target,
             R_log,
             time,
             f"tmp_r_plot_{frame_index}.png",
+        )
+
+    # Render the feature distance plot.
+    if render_feature_distance:
+        plot_feature_distance(
+            reference, image, f"tmp_feature_distance_{frame_index}.png"
         )
 
     frame_index += 1

@@ -5,40 +5,58 @@ from ..camera_pose_estimation.FivePointEstimator import FivePointEstimator
 from ..plotting.plot_convergence import plot_t_convergence, plot_r_convergence
 from ..utilities import make_rotation_matrix, convert_angles_to_matrix
 from ..logging.PoseLogger import PoseLogger
+from .SettingsLoader import SettingsLoader
+import os
 import numpy as np
 import cv2
+from pathlib import Path
+
+SETTINGS_FILE = "data/blender-scenes/forest.json"
+
+# Load the settings and create the result directory.
+settings = SettingsLoader.load_settings(SETTINGS_FILE)
+Path(settings["save_folder"]).mkdir(parents=True, exist_ok=True)
+
+
+def with_folder(file_name: str):
+    return os.path.join(settings["save_folder"], file_name)
+
 
 # Create the camera.
-camera = CameraBlender((1000, 1160, 3), "data/blender-scenes/spring.blend")
+camera = CameraBlender(
+    tuple(settings["image_shape"].astype(np.int64).tolist()), settings["scene"]
+)
 
-camera_location_a = np.array((10, -7, 8), dtype=np.float64)
-camera_location_b = np.array((9, -8, 9), dtype=np.float64)
-camera_target_a = np.array((0, 0, 0), dtype=np.float64)
-camera_target_b = np.array((0, 0, 0), dtype=np.float64)
+# Calculate R and t for the initial and reference poses.
+reference_location = settings["reference_location"]
+initial_location = settings["initial_location"]
+R_reference = make_rotation_matrix(reference_location, settings["reference_target"])
+R_initial = make_rotation_matrix(initial_location, settings["initial_target"])
 
-R_a = make_rotation_matrix(camera_location_a, camera_target_a)
-R_b = make_rotation_matrix(camera_location_b, camera_target_b)
-
-# Render the images.
-image_a = camera.render_with_pose(R_a, camera_location_a)
-image_b = camera.render_with_pose(R_b, camera_location_b)
-cv2.imwrite("tmp_target_pose.png", image_a)
-cv2.imwrite("tmp_initial_pose.png", image_b)
+# Render the reference and initial images.
+image_a = camera.render_with_pose(R_reference, reference_location)
+image_b = camera.render_with_pose(R_initial, initial_location)
+cv2.imwrite(with_folder("tmp_target_pose.png"), image_a)
+cv2.imwrite(with_folder("tmp_initial_pose.png"), image_b)
 
 # Run Feng's algorithm.
 fpe = FivePointEstimator()
 rig = CameraRig(
     camera,
-    convert_angles_to_matrix(3, 3, 3),
-    np.array([0.2, 0.1, 0.4], dtype=np.float64),
+    convert_angles_to_matrix(*settings["hand_eye_euler_xyz"].tolist()),
+    settings["hand_eye_translation"],
 )
-rig.set_up_oracle(camera_location_a)
+rig.set_up_oracle(reference_location)
 pose_logger = PoseLogger()
-algo = FengDynamicRelocalizer(rig, fpe, 2.0, 0.05, pose_logger)
+algo = FengDynamicRelocalizer(
+    rig, fpe, settings["s_initial"], settings["s_min"], pose_logger
+)
 
-s_log, recreation = algo.recreate_image(image_a, R_b, camera_location_b)
-cv2.imwrite("tmp_recreated_pose.png", recreation)
-pose_logger.save("tmp_intermediate_poses.npz", R_a, camera_location_a)
-plot_t_convergence(camera_location_a, rig.translation_log, s_log)
-plot_r_convergence(R_a, rig.rotation_log)
+s_log, recreation = algo.recreate_image(image_a, R_initial, initial_location)
+cv2.imwrite(with_folder("tmp_recreated_pose.png"), recreation)
+pose_logger.save(
+    with_folder("tmp_intermediate_poses.npz"), R_reference, reference_location
+)
+plot_t_convergence(reference_location, rig.translation_log, s_log)
+plot_r_convergence(R_reference, rig.rotation_log)
 print("Done!")

@@ -3,7 +3,7 @@ import cv2 as cv
 from matplotlib import pyplot as plt
 
 # Note: Lower AFD is better
-def computeAFD(image_ref: np.ndarray, image_curr: np.ndarray) -> float:
+def compute_feature_distance(image_ref: np.ndarray, image_curr: np.ndarray) -> float:
     # Code adapted from OpenCV documentation example
     # https://docs.opencv.org/master/da/de9/tutorial_py_epipolar_geometry.html
     sift = cv.SIFT_create()
@@ -46,7 +46,7 @@ def computeAFD(image_ref: np.ndarray, image_curr: np.ndarray) -> float:
 
     afd = running_sum / len(pts1)
 
-    return afd
+    return afd, pts1, pts2
 
 
 def is_rotation_matrix(R: np.ndarray) -> bool:
