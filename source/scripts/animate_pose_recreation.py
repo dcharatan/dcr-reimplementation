@@ -1,21 +1,35 @@
 import numpy as np
 import cv2
+import os
 from scipy.spatial.transform import Rotation, Slerp
 from ..camera.CameraBlender import CameraBlender
 from ..plotting.plot_convergence import plot_t_convergence, plot_r_convergence
 from ..plotting.plot_feature_distance import plot_feature_distance
+from .SettingsLoader import SettingsLoader
 
-# Settings go here.
-pose_file = "tmp_intermediate_poses.npz"
-frames_per_pose = 15
-camera = CameraBlender((1000, 1160, 3), "data/blender-scenes/spring.blend")
-save_images = False
-render_plots = False
+# This uses the same settings file as camera_recreate_pose.py. The remaining
+# settings are animation-specific. Make sure you've actually run
+# camera_recreate_pose to populate the results folder first.
+SETTINGS_FILE = "data/blender-scenes/forest.json"
+save_images = True
+render_plots = True
 render_feature_distance = True
+frames_per_pose = 15
 smoothing = 2.2
 
+# Settings go here.
+settings = SettingsLoader.load_settings(SETTINGS_FILE)
+camera = CameraBlender(
+    tuple(settings["image_shape"].astype(np.int64).tolist()), settings["scene"]
+)
+
+
+def with_folder(file_name: str):
+    return os.path.join(settings["save_folder"], file_name)
+
+
 # Load the intermediate poses.
-poses = np.load(pose_file)
+poses = np.load(with_folder("tmp_intermediate_poses.npz"))
 R_log = poses["R_log"]
 t_log = poses["t_log"]
 R_target = poses["R_target"]
@@ -51,7 +65,7 @@ def render(R, t, time):
     # Render the image.
     image = camera.render_with_pose(R, t)
     if save_images:
-        cv2.imwrite(f"tmp_animation_frame_{frame_index}.png", image)
+        cv2.imwrite(with_folder(f"tmp_animation_frame_{frame_index}.png"), image)
 
     # Render the plots.
     if render_plots:
@@ -60,19 +74,19 @@ def render(R, t, time):
             t_log,
             None,
             time,
-            f"tmp_t_plot_{frame_index}.png",
+            with_folder(f"tmp_t_plot_{frame_index}.png"),
         )
         plot_r_convergence(
             R_target,
             R_log,
             time,
-            f"tmp_r_plot_{frame_index}.png",
+            with_folder(f"tmp_R_plot_{frame_index}.png"),
         )
 
     # Render the feature distance plot.
     if render_feature_distance:
         plot_feature_distance(
-            reference, image, f"tmp_feature_distance_{frame_index}.png"
+            reference, image, with_folder(f"tmp_feature_distance_{frame_index}.png")
         )
 
     frame_index += 1
