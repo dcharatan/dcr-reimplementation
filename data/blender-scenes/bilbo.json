@@ -1,0 +1,13 @@
+{
+  "scene": "data/blender-scenes/bilbo.blend",
+  "image_shape": [1000, 1160, 3],
+  "reference_location": [10, -10, 9],
+  "reference_target": [0, 0, 0],
+  "initial_location": [7, -6, 8],
+  "initial_target": [2.5, -3, 4],
+  "save_folder": "results/bilbo",
+  "hand_eye_euler_xyz": [7, 9, -4],
+  "hand_eye_translation": [0.35, -0.15, 0.8],
+  "s_initial": 2.0,
+  "s_min": 0.02
+}

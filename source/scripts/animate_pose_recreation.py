@@ -10,7 +10,7 @@ from .SettingsLoader import SettingsLoader
 # This uses the same settings file as camera_recreate_pose.py. The remaining
 # settings are animation-specific. Make sure you've actually run
 # camera_recreate_pose to populate the results folder first.
-SETTINGS_FILE = "data/blender-scenes/forest.json"
+SETTINGS_FILE = "data/blender-scenes/bilbo.json"
 save_images = True
 render_plots = True
 render_feature_distance = True
@@ -63,7 +63,8 @@ def render(R, t, time):
     global reference
 
     # Render the image.
-    image = camera.render_with_pose(R, t)
+    if save_images or render_feature_distance:
+        image = camera.render_with_pose(R, t)
     if save_images:
         cv2.imwrite(with_folder(f"tmp_animation_frame_{frame_index}.png"), image)
 
