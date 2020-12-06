@@ -38,7 +38,7 @@ algo = FengDynamicRelocalizer(rig, fpe, 2.0, 0.05, pose_logger)
 
 s_log, recreation = algo.recreate_image(image_a, R_b, camera_location_b)
 cv2.imwrite("tmp_recreated_pose.png", recreation)
-pose_logger.save("tmp_intermediate_poses.npz")
+pose_logger.save("tmp_intermediate_poses.npz", R_a, camera_location_a)
 plot_t_convergence(camera_location_a, rig.translation_log, s_log)
 plot_r_convergence(R_a, rig.rotation_log)
 print("Done!")

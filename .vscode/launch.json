@@ -11,16 +11,16 @@
             "module": "source.scripts.camera_render",
         },
         {
-            "name": "Test Pose Estimation With Synthetic Images",
+            "name": "Run Pose Estimation With Synthetic Images",
             "type": "python",
             "request": "launch",
             "module": "source.scripts.camera_recreate_pose",
         },
         {
-            "name": "Test Pose Estimation Quat With Synthetic Images",
+            "name": "Animate Pose Estimation Log",
             "type": "python",
             "request": "launch",
-            "module": "source.scripts.camera_recreate_pose_quat",
+            "module": "source.scripts.animate_pose_recreation",
         },
         {
             "name": "Test Five Point Solver",

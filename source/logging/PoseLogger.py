@@ -1,6 +1,7 @@
 import numpy as np
 from typing import List
 from ..algorithm.CameraRig import CameraRig
+from ..utilities import is_rotation_matrix, is_translation_vector
 
 
 class PoseLogger:
@@ -15,5 +16,13 @@ class PoseLogger:
         self.R_log.append(camera_rig.get_eye_R())
         self.t_log.append(camera_rig.get_eye_t())
 
-    def save(self, file_name: str):
-        np.savez(file_name, np.stack(self.R_log), np.stack(self.t_log))
+    def save(self, file_name: str, R_target: np.ndarray, t_target: np.ndarray):
+        assert is_rotation_matrix(R_target)
+        assert is_translation_vector(t_target)
+        np.savez(
+            file_name,
+            R_log=np.stack(self.R_log),
+            t_log=np.stack(self.t_log),
+            R_target=R_target,
+            t_target=t_target,
+        )
