@@ -5,9 +5,10 @@ from ..camera.CameraBlender import CameraBlender
 from ..plotting.plot_convergence import plot_t_convergence, plot_r_convergence
 
 pose_file = "tmp_intermediate_poses.npz"
-frames_per_pose = 5
-camera = CameraBlender((1200, 1600, 3), "data/blender-scenes/spring.blend")
+frames_per_pose = 15
+camera = CameraBlender((1000, 1160, 3), "data/blender-scenes/spring.blend")
 render_plots = True
+smoothing = 2.2
 
 # Load the intermediate poses.
 poses = np.load(pose_file)
@@ -27,8 +28,16 @@ def interpolate_R(R_left, R_right, t):
     return slerp(t).as_matrix()
 
 
+def smooth(t):
+    factor = np.power(0.5, 1 - smoothing)
+    if t < 0.5:
+        return factor * np.power(t, smoothing)
+    else:
+        return 1 - factor * np.power(1 - t, smoothing)
+
+
 # Define a camera rendering helper.
-def render(R, t):
+def render(R, t, time):
     global frame_index
 
     # Render the image.
@@ -41,13 +50,13 @@ def render(R, t):
             poses["t_target"],
             t_log,
             None,
-            frame_index / frames_per_pose,
+            time,
             f"tmp_t_plot_{frame_index}.png",
         )
         plot_r_convergence(
             poses["R_target"],
             R_log,
-            frame_index / frames_per_pose,
+            time,
             f"tmp_r_plot_{frame_index}.png",
         )
 
@@ -57,7 +66,7 @@ def render(R, t):
 # Render in-between frames.
 for pose_index in range(num_poses):
     # Render the pose itself.
-    render(R_log[pose_index], t_log[pose_index])
+    render(R_log[pose_index], t_log[pose_index], pose_index)
 
     # Render intermediate poses.
     if pose_index != num_poses - 1:
@@ -69,9 +78,9 @@ for pose_index in range(num_poses):
 
         # Render interpolated frames.
         for i in range(1, frames_per_pose):
-            progress = i / frames_per_pose
+            progress = smooth(i / frames_per_pose)
             R = interpolate_R(R_left, R_right, progress)
             t = interpolate_t(t_left, t_right, progress)
-            render(R, t)
+            render(R, t, pose_index + progress)
 
 print("Done.")

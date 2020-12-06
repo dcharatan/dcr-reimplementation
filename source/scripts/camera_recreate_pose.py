@@ -9,7 +9,7 @@ import numpy as np
 import cv2
 
 # Create the camera.
-camera = CameraBlender((1200, 1600, 3), "data/blender-scenes/spring.blend")
+camera = CameraBlender((1000, 1160, 3), "data/blender-scenes/spring.blend")
 
 camera_location_a = np.array((10, -7, 8), dtype=np.float64)
 camera_location_b = np.array((9, -8, 9), dtype=np.float64)

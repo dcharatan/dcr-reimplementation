@@ -3,8 +3,9 @@ import bpy, sys, mathutils
 scene = bpy.data.scenes["Scene"]
 
 # Set render resolution.
-scene.render.resolution_x = int(sys.argv[-8])
-scene.render.resolution_y = int(sys.argv[-7])
+for s in bpy.data.scenes:
+    s.render.resolution_x = int(sys.argv[-8])
+    s.render.resolution_y = int(sys.argv[-7])
 
 # Create a new camera.
 new_camera = bpy.data.cameras.new("DCR Camera")
