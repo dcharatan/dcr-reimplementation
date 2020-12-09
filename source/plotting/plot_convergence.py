@@ -46,7 +46,7 @@ def plot_R_distance_to_ground_truth(
     to_euler = lambda x: Rotation.from_matrix(x).as_euler("xyz", True)
 
     fig, ax = plt.subplots()
-    plt.title("Convergence of R")
+    plt.title("Distance to Ground Truth (R)")
     plt.grid(True)
     euler_target = to_euler(target_rotation)
     euler_log = np.stack([to_euler(R) - euler_target for R in rotation_log])
