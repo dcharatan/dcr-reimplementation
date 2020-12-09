@@ -6,6 +6,9 @@ scene = bpy.data.scenes["Scene"]
 for s in bpy.data.scenes:
     s.render.resolution_x = int(sys.argv[-8])
     s.render.resolution_y = int(sys.argv[-7])
+    s.render.resolution_percentage = 100
+    s.render.pixel_aspect_x = 1
+    s.render.pixel_aspect_y = 1
 
 # Create a new camera.
 new_camera = bpy.data.cameras.new("DCR Camera")
