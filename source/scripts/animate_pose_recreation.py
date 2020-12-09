@@ -3,14 +3,17 @@ import cv2
 import os
 from scipy.spatial.transform import Rotation, Slerp
 from ..camera.CameraBlender import CameraBlender
-from ..plotting.plot_convergence import plot_t_convergence, plot_r_convergence
+from ..plotting.plot_convergence import (
+    plot_t_distance_to_ground_truth,
+    plot_R_distance_to_ground_truth,
+)
 from ..plotting.plot_feature_distance import plot_feature_distance
 from .SettingsLoader import SettingsLoader
 
 # This uses the same settings file as camera_recreate_pose.py. The remaining
 # settings are animation-specific. Make sure you've actually run
 # camera_recreate_pose to populate the results folder first.
-SETTINGS_FILE = "data/blender-scenes/bilbo.json"
+SETTINGS_FILE = "data/blender-scenes/forest.json"
 save_images = True
 render_plots = True
 render_feature_distance = True
@@ -70,14 +73,13 @@ def render(R, t, time):
 
     # Render the plots.
     if render_plots:
-        plot_t_convergence(
+        plot_t_distance_to_ground_truth(
             t_target,
             t_log,
-            None,
             time,
             with_folder(f"tmp_t_plot_{frame_index}.png"),
         )
-        plot_r_convergence(
+        plot_R_distance_to_ground_truth(
             R_target,
             R_log,
             time,

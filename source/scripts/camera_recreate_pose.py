@@ -13,7 +13,7 @@ import git
 import json
 from pathlib import Path
 
-SETTINGS_FILE = "data/blender-scenes/bilbo.json"
+SETTINGS_FILE = "data/blender-scenes/forest.json"
 
 # Load the settings and create the result directory.
 settings = SettingsLoader.load_settings(SETTINGS_FILE)
