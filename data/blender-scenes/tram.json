@@ -1,0 +1,13 @@
+{
+  "scene": "data/blender-scenes/tram.blend",
+  "image_shape": [1000, 1160, 3],
+  "reference_location": [10, -12, 1.5],
+  "reference_target": [0, 0, 0],
+  "initial_location": [5, -10, 3],
+  "initial_target": [1, 2, 1],
+  "save_folder": "results/tram",
+  "hand_eye_euler_xyz": [13, 6, -17],
+  "hand_eye_translation": [0.8, -0.5, 0.6],
+  "s_initial": 2.0,
+  "s_min": 0.02
+}
