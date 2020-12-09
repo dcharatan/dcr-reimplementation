@@ -2,6 +2,28 @@ import numpy as np
 import cv2 as cv
 from matplotlib import pyplot as plt
 
+
+def triangulateAndCountInliers(pts1, pts2, R, T, inv_K):
+    positive_inlier_count = 0
+    num_pts = pts1.shape[0]
+    cat_ones = np.ones((num_pts, 1))
+    pts1_cated = np.concatenate((pts1, cat_ones), 1)
+    pts2_cated = np.concatenate((pts2, cat_ones), 1)
+    gamma1 = np.matmul(inv_K, pts1_cated.reshape(3, -1))
+    gamma2 = np.matmul(inv_K, pts2_cated.reshape(3, -1))
+
+    for i in range(num_pts):
+        R_gamma1_expanded = np.expand_dims(np.matmul(-R, gamma1[:, i]), 1)
+        gamma2_expanded = np.expand_dims(gamma2[:, i], 1)
+        R_gamma1_gamma2_concat = np.concatenate((R_gamma1_expanded, gamma2_expanded), 1)
+        R_gamma1_gamma2_pinv = np.linalg.pinv(R_gamma1_gamma2_concat)
+        rho1_rho2 = np.matmul(R_gamma1_gamma2_pinv, T)
+        if rho1_rho2[0] > 0 and rho1_rho2[1] > 0:
+            positive_inlier_count += 1
+
+    return positive_inlier_count
+
+
 # Utility function to plot the epipolar lines between 2 images. Useful to see
 # if we ever encounter a failure case for the 5-point algorithm
 def plotEpipolarLines(
@@ -45,9 +67,12 @@ def plotEpipolarLines(
     )
     # np.mat([[0,-T2,T1],[T2,0,-T[0]],[-T1,T[0],0]])
     gt_E = np.matmul(gt_R, t_x)
-
     inv_K = np.linalg.inv(K)
     gt_F = np.matmul(np.linalg.inv(np.transpose(K)), np.matmul(gt_E, inv_K))
+
+    # from IPython import embed
+
+    # embed()
 
     # We select only inlier points
     pts1 = pts1[mask.ravel() == 1]
@@ -95,27 +120,27 @@ def plotEpipolarLines(
 
 
 # R for correct case
-R_delta = np.array(
-    [
-        [0.99988411, 0.00245706, 0.01502412],
-        [-0.00251743, 0.99998883, 0.00400114],
-        [-0.01501412, -0.0040385, 0.99987913],
-    ]
-)
-# t for the correct case
-t_delta = np.array([0.46602022, 0.377932, -0.42737709])
-
-# # R for incorrect case
 # R_delta = np.array(
 #     [
-#         [0.99274945, 0.05999797, -0.10415747],
-#         [-0.06612377, 0.9962168, -0.05638909],
-#         [0.10038019, 0.06286753, 0.99296097],
+#         [0.99988411, 0.00245706, 0.01502412],
+#         [-0.00251743, 0.99998883, 0.00400114],
+#         [-0.01501412, -0.0040385, 0.99987913],
 #     ]
 # )
+# # t for the correct case
+# t_delta = np.array([0.46602022, 0.377932, -0.42737709])
 
-# # This t is for the incorrect case
-# t_delta = np.array([1.0, 1.0, -1.0])
+# # R for incorrect case
+R_delta = np.array(
+    [
+        [0.99324032, 0.06042289, -0.09910978],
+        [-0.0660434, 0.9963304, -0.05444273],
+        [0.0954565, 0.06062027, 0.99358605],
+    ]
+)
+
+# This t is for the incorrect case
+t_delta = np.array([1.0, 1.0, -1.0])
 K = np.array(
     [
         [1.71560547e03, 0.00000000e00, 8.00000000e02],

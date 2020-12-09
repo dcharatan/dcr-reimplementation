@@ -4,6 +4,27 @@ from typing import Tuple
 import cv2 as cv
 
 
+def triangulateAndCountInliers(pts1, pts2, R, T, inv_K):
+    positive_inlier_count = 0
+    num_pts = pts1.shape[0]
+    cat_ones = np.ones((num_pts, 1))
+    pts1_cated = np.concatenate((pts1, cat_ones), 1)
+    pts2_cated = np.concatenate((pts2, cat_ones), 1)
+    gamma1 = np.matmul(inv_K, pts1_cated.reshape(3, -1))
+    gamma2 = np.matmul(inv_K, pts2_cated.reshape(3, -1))
+
+    for i in range(num_pts):
+        R_gamma1_expanded = np.expand_dims(np.matmul(-R, gamma1[:, i]), 1)
+        gamma2_expanded = np.expand_dims(gamma2[:, i], 1)
+        R_gamma1_gamma2_concat = np.concatenate((R_gamma1_expanded, gamma2_expanded), 1)
+        R_gamma1_gamma2_pinv = np.linalg.pinv(R_gamma1_gamma2_concat)
+        rho1_rho2 = np.matmul(R_gamma1_gamma2_pinv, T)
+        if rho1_rho2[0] > 0 and rho1_rho2[1] > 0:
+            positive_inlier_count += 1
+
+    return positive_inlier_count
+
+
 class FivePointEstimator(CameraPoseEstimator):
     def _estimate_pose(
         self, image1: np.ndarray, image2: np.ndarray, K: np.ndarray
@@ -40,5 +61,18 @@ class FivePointEstimator(CameraPoseEstimator):
         )
         # E, _ = cv.findEssentialMat(pts1, pts2, cameraMatrix=K, method=cv.FM_LMEDS)
 
+        # Compute R and t from OpenCV's recoverPose() function
         _, R_est, t_est, _ = cv.recoverPose(E, pts1, pts2)
+
+        # Use our custom triangulation function to check whether t or -t has
+        # more inliers, and choose the correct t accordingly
+        pos_t_inliers = triangulateAndCountInliers(
+            pts1, pts2, R_est, t_est, np.linalg.inv(K)
+        )
+        neg_t_inliers = triangulateAndCountInliers(
+            pts1, pts2, R_est, -t_est, np.linalg.inv(K)
+        )
+        if neg_t_inliers > pos_t_inliers:
+            t_est = -t_est
+
         return R_est, t_est.squeeze()
