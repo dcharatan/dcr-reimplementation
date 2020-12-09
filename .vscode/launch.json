@@ -15,12 +15,14 @@
             "type": "python",
             "request": "launch",
             "module": "source.scripts.camera_recreate_pose",
+            "args": ["data/blender-scenes/forest.json"],
         },
         {
             "name": "Animate Pose Estimation Log",
             "type": "python",
             "request": "launch",
             "module": "source.scripts.animate_pose_recreation",
+            "args": ["data/blender-scenes/forest.json"],
         },
         {
             "name": "Test Five Point Solver",

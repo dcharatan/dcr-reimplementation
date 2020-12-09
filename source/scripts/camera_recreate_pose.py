@@ -12,8 +12,9 @@ import cv2
 import git
 import json
 from pathlib import Path
+from ..utilities import parse_args_for_settings_file
 
-SETTINGS_FILE = "data/blender-scenes/forest.json"
+SETTINGS_FILE = parse_args_for_settings_file()
 
 # Load the settings and create the result directory.
 settings = SettingsLoader.load_settings(SETTINGS_FILE)

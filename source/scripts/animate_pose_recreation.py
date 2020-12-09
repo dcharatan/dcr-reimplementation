@@ -9,11 +9,12 @@ from ..plotting.plot_convergence import (
 )
 from ..plotting.plot_feature_distance import plot_feature_distance
 from .SettingsLoader import SettingsLoader
+from ..utilities import parse_args_for_settings_file
 
 # This uses the same settings file as camera_recreate_pose.py. The remaining
 # settings are animation-specific. Make sure you've actually run
 # camera_recreate_pose to populate the results folder first.
-SETTINGS_FILE = "data/blender-scenes/forest.json"
+SETTINGS_FILE = parse_args_for_settings_file()
 save_images = True
 render_plots = True
 render_feature_distance = True

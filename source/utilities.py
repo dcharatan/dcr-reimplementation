@@ -1,6 +1,20 @@
 import numpy as np
 import cv2 as cv
 from matplotlib import pyplot as plt
+from argparse import ArgumentParser
+
+
+def parse_args_for_settings_file():
+    """Parse the single argument (the settings JSON file) for scripts that
+    require it.
+    """
+
+    parser = ArgumentParser(description="Script with JSON Settings File")
+    parser.add_argument("file_name", help="The JSON settings file.")
+    args = parser.parse_args()
+
+    return args.file_name
+
 
 # Note: Lower AFD is better
 def compute_feature_distance(image_ref: np.ndarray, image_curr: np.ndarray) -> float:
