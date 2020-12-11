@@ -2,7 +2,7 @@
 
 ![](spring.gif)
 
-This project is a simulated implementation of the paper [6D Dynamic Camera Relocalization from Single Reference Image](https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Feng_6D_Dynamic_Camera_CVPR_2016_paper.pdf) by Wei Feng, Fei-Peng Tian, Qian Zhang and Jizhou Sun. It was created for the class ENGN 2560: Computer Vision at Brown University.
+This project is a simulated implementation of the paper [6D Dynamic Camera Relocalization from Single Reference Image](https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Feng_6D_Dynamic_Camera_CVPR_2016_paper.pdf) by Wei Feng, Fei-Peng Tian, Qian Zhang and Jizhou Sun. It was created for the class ENGN 2560: Computer Vision at Brown University. A slide deck with more details and some results can be found [here](https://docs.google.com/presentation/d/1w23GbTfNJ4wh9dU4A1MeWLs5rPeADABN1MMS7IDJsAM/edit?usp=sharing).
 
 ## Running the Project
 
